@@ -4,13 +4,22 @@ const cors = require("cors");
 const mysql = require("mysql2");
 const { WebSocketServer } = require("ws");
 
+require("dotenv").config(); // โหลด .env
+
+const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
+const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
+const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
+
+console.log('Facebook Token:', FACEBOOK_ACCESS_TOKEN);
+
+
 // ตั้งค่าการเชื่อมต่อ MySQL
 const pool = mysql.createPool({
-  host: "",
-  user: "doadmin",
-  password: "",
-  database: "ChatAi",
-  port: 25060,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -140,7 +149,10 @@ app.get("/api/test", (req, res) => {
   return res.status(200).json({ ss: "ok" });
 });
 
+// ใช้ค่าจาก .env
+const PORT = process.env.PORT || 3001;
+
 // เริ่มต้นเซิร์ฟเวอร์
-app.listen(3001, () => {
-  console.log("Backend server is running on http://localhost:3001");
+app.listen(PORT, () => {
+  console.log(`Backend server is running on http://0.0.0.0:${PORT}`);
 });
