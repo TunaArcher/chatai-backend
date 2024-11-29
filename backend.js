@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql2");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { WebSocketServer } = require("ws");
 
 require("dotenv").config(); // โหลด .env
@@ -53,6 +54,21 @@ const broadcastMessage = (message) => {
     }
   });
 };
+
+//function gemini AI
+async function start_AI(message_in) {
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  let result = await model.generateContent(message_in);
+  return result.response.text();
+}
+
+app.get("/geminicall", async (req, res) =>  {
+  let prompt = "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม /n";
+  let ai_talk = await start_AI(prompt);
+  res.send({"AI": ai_talk})
+});
+
 
 // Endpoint: รับข้อความจาก Facebook Webhook
 app.post("/webhook/facebook", (req, res) => {
