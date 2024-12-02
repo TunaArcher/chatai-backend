@@ -187,15 +187,16 @@ app.get("/api/test", (req, res) => {
   return res.status(200).json({ ss: "ok" });
 });
 
-const handleEvents = (events) => {
+const handleEvents = async (events) => {
   const text = get(events, ["messaging", 0, "message", "text"]);
   const sender = get(events, ["messaging", 0, "sender", "id"]);
+  let ai_talk = await start_AI(text);
   const requestBody = {
     messaging_type: "RESPONSE",
     recipient: {
       id: sender,
     },
-    message: { text },
+    message: { ai_talk },
   };
 
   const config = {
