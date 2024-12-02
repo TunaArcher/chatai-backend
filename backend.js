@@ -69,11 +69,11 @@ async function start_AI(message_in) {
   return result.response.text();
 }
 
-app.post("/api/geminicall", async (req, res) => {
-  const { message } = req.body;
-  let ai_talk = await start_AI(message);
-  res.send({ AI: ai_talk });
-});
+// app.post("/api/geminicall", async (req, res) => {
+//   const { message } = req.body;
+//   let ai_talk = await start_AI(message);
+//   res.send({ AI: ai_talk });
+// });
 
 app.get("/api/webhookfacebook", async (req, res) => {
   // Parse the query params
@@ -95,13 +95,15 @@ app.post("/api/webhookfacebook", async (req, res) => {
   const { body } = req;
   if (body.object === "page") {
     const events = body && body.entry && body.entry[0];
-    await handleEvents(events);
+    await handleEventsFacebook(events);
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
   }
   return res.sendStatus(200);
 });
+
+
 // Endpoint: รับข้อความจาก LINE Webhook
 app.post("/webhook/line", (req, res) => {
   const message = req.body.events[0]?.message;
@@ -187,10 +189,11 @@ app.get("/api/test", (req, res) => {
   return res.status(200).json({ ss: "ok" });
 });
 
-const handleEvents = async (events) => {
+const handleEventsFacebook = async (events) => {
   const text = get(events, ["messaging", 0, "message", "text"]);
   const sender = get(events, ["messaging", 0, "sender", "id"]);
-  let ai_talk = await start_AI(text);
+  const ai_talk = await start_AI(text);
+  console.log(ai_talk);
   const requestBody = {
     messaging_type: "RESPONSE",
     recipient: {
