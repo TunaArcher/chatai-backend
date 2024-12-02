@@ -188,21 +188,20 @@ app.get("/api/test", (req, res) => {
 });
 
 const handleEventsFacebook = async (events) => {
-  const text = get(events, ["messaging", 0, "message", "text"]);
+  const hunmen = get(events, ["messaging", 0, "message", "text"]);
   const sender = get(events, ["messaging", 0, "sender", "id"]);
-  let ai_talk = await start_AI(text);
-  ai_talk = ai_talk.toString();
+  console.log(hunmen);
+  
+  let text = await start_AI(hunmen);
+  text = text.toString();
 
   const requestBody = {
     messaging_type: "RESPONSE",
     recipient: {
       id: sender,
     },
-    message: { ai_talk },
+    message: { text },
   };
-
-  console.log(requestBody);
-  
 
   const config = {
     method: "post",
