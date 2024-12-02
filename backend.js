@@ -65,14 +65,15 @@ async function start_AI(message_in) {
 app.post("/api/geminicall", async (req, res) => {
   const { message } = req.body;
   let prompt =
-    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม \n";
+    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ \n";
   prompt += message;
+  prompt += "หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม";
   let ai_talk = await start_AI(prompt);
   res.send({ AI: ai_talk });
 });
 
 // Endpoint: รับข้อความจาก Facebook Webhook
-app.post("/webhook/facebook", (req, res) => {
+app.post("/api/facebookwebhook", (req, res) => {
   const message = req.body.entry[0]?.messaging[0];
   if (message) {
     const senderId = message.sender.id; // ตัวระบุบุคคล
