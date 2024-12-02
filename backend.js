@@ -2,15 +2,15 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql2");
-const { get } = require('lodash')
-const request = require('request')
+const { get } = require("lodash");
+const request = require("request");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { WebSocketServer } = require("ws");
 
 require("dotenv").config(); // โหลด .env
 
 const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
-const PAGE_ACCESS_TOKEN  = process.env.PAGE_ACCESS_TOKEN;
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 
@@ -77,18 +77,17 @@ async function start_AI(message_in) {
 
 app.get("/api/webhookfacebook", async (req, res) => {
   // Parse the query params
-  const mode = req.query['hub.mode'];
-  const token = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
-  if (mode === 'subscribe' && token === FACEBOOK_ACCESS_TOKEN) {
-    res.send(challenge)
-  }
-  else {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+  if (mode === "subscribe" && token === FACEBOOK_ACCESS_TOKEN) {
+    res.send(challenge);
+  } else {
     // Responds with '403 Forbidden' if verify tokens do not match
-    console.log('WEBHOOK_VERIFIED');
+    console.log("WEBHOOK_VERIFIED");
     res.sendStatus(403);
   }
-})
+});
 
 // Endpoint: รับข้อความจาก Facebook Webhook
 app.post("/api/webhookfacebook", async (req, res) => {
@@ -102,7 +101,6 @@ app.post("/api/webhookfacebook", async (req, res) => {
   }
   return res.sendStatus(200);
 });
-
 
 // Endpoint: รับข้อความจาก LINE Webhook
 app.post("/webhook/line", (req, res) => {
@@ -193,7 +191,7 @@ const handleEventsFacebook = async (events) => {
   const text = get(events, ["messaging", 0, "message", "text"]);
   const sender = get(events, ["messaging", 0, "sender", "id"]);
   const ai_talk = await start_AI(text);
-  console.log(ai_talk);
+  ai_talk = ai_talk.toString();
   const requestBody = {
     messaging_type: "RESPONSE",
     recipient: {
