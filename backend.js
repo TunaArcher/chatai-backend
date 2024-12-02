@@ -74,8 +74,23 @@ app.post("/api/geminicall", async (req, res) => {
   res.send({ AI: ai_talk });
 });
 
+app.get("/api/webhookfacebook", async (req, res) => {
+  // Parse the query params
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  if (mode === 'subscribe' && token === FACEBOOK_ACCESS_TOKEN) {
+    res.send(challenge)
+  }
+  else {
+    // Responds with '403 Forbidden' if verify tokens do not match
+    console.log('WEBHOOK_VERIFIED');
+    res.sendStatus(403);
+  }
+})
+
 // Endpoint: รับข้อความจาก Facebook Webhook
-app.post("/api/facebookwebhook", async (req, res) => {
+app.post("/api/webhookfacebook", async (req, res) => {
   const { body } = req;
   if (body.object === "page") {
     const events = body && body.entry && body.entry[0];
