@@ -74,16 +74,15 @@ app.post("/api/geminicall", async (req, res) => {
 
 // Endpoint: รับข้อความจาก Facebook Webhook
 app.post("/api/facebookwebhook", async (req, res) => {
-  // const { message } = req.body;
-  const message = req.body.entry[0]?.messaging[0];
-  if (message) {
-    const senderId = message.sender.id; // ตัวระบุบุคคล
-    const text = message.message?.text || "ไม่มีข้อความ";
-    let ai_talk = await start_AI(message);
-    // saveMessageToDB("facebook", senderId, text);
-    res.send({ AI: ai_talk });
+  const { body } = req;
+  if (body.object === "page") {
+    const events = body && body.entry && body.entry[0];
+    await handleEvents(events);
+  } else {
+    // Returns a '404 Not Found' if event is not from a page subscription
+    res.sendStatus(404);
   }
-  res.sendStatus(200);
+  return res.sendStatus(200);
 });
 // Endpoint: รับข้อความจาก LINE Webhook
 app.post("/webhook/line", (req, res) => {
