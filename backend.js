@@ -10,6 +10,7 @@ const { WebSocketServer } = require("ws");
 require("dotenv").config(); // โหลด .env
 
 const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
+const PAGE_ACCESS_TOKEN  = process.env.FACEBOOK_ACCESS_TOKEN;
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 
@@ -202,7 +203,7 @@ const handleEvents = (events) => {
     uri: "https://graph.facebook.com/v6.0/me/messages",
     json: requestBody,
     qs: {
-      access_token: `${FACEBOOK_ACCESS_TOKEN}`,
+      access_token: `${PAGE_ACCESS_TOKEN}`,
     },
   };
   return request(config, (err, res, body) => {
