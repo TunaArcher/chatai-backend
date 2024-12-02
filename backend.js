@@ -11,8 +11,7 @@ const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 
-console.log('Facebook Token:', FACEBOOK_ACCESS_TOKEN);
-
+console.log("Facebook Token:", FACEBOOK_ACCESS_TOKEN);
 
 // ตั้งค่าการเชื่อมต่อ MySQL
 const pool = mysql.createPool({
@@ -63,15 +62,14 @@ async function start_AI(message_in) {
   return result.response.text();
 }
 
-app.post("/api/geminicall", async (req, res) =>  {
-  const message = req.body
-  let prompt = "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม /n";
+app.post("/api/geminicall", async (req, res) => {
+  const { message } = req.body;
+  let prompt =
+    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม \n";
   prompt += message;
-  console.log(prompt);
   let ai_talk = await start_AI(prompt);
-  res.send({"AI": ai_talk})
+  res.send({ AI: ai_talk });
 });
-
 
 // Endpoint: รับข้อความจาก Facebook Webhook
 app.post("/webhook/facebook", (req, res) => {
