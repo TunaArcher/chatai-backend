@@ -60,7 +60,7 @@ const broadcastMessage = (message) => {
 //function gemini AI
 async function start_AI(message_in) {
   let prompt =
-    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ \n";
+    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ ตอบแบบกระชับ\n";
   prompt += message_in;
   prompt += "หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม";
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
@@ -192,12 +192,13 @@ const handleEventsFacebook = async (events) => {
   const sender = get(events, ["messaging", 0, "sender", "id"]);
   const ai_talk = await start_AI(text);
   ai_talk = ai_talk.toString();
+
   const requestBody = {
     messaging_type: "RESPONSE",
     recipient: {
       id: sender,
     },
-    message: { ai_talk },
+    message: { text },
   };
 
   const config = {
@@ -208,6 +209,7 @@ const handleEventsFacebook = async (events) => {
       access_token: `${PAGE_ACCESS_TOKEN}`,
     },
   };
+
   return request(config, (err, res, body) => {
     if (!body.error) {
       console.log("message sent!", body);
