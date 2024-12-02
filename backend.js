@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql2");
+const { get } = require('lodash')
+const request = require('request')
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { WebSocketServer } = require("ws");
 
@@ -168,6 +170,35 @@ app.get("/api/chat-rooms/:roomId/messages", (req, res) => {
 app.get("/api/test", (req, res) => {
   return res.status(200).json({ ss: "ok" });
 });
+
+const handleEvents = (events) => {
+  const text = get(events, ["messaging", 0, "message", "text"]);
+  const sender = get(events, ["messaging", 0, "sender", "id"]);
+  const requestBody = {
+    messaging_type: "RESPONSE",
+    recipient: {
+      id: sender,
+    },
+    message: { text },
+  };
+
+  const config = {
+    method: "post",
+    uri: "https://graph.facebook.com/v6.0/me/messages",
+    json: requestBody,
+    qs: {
+      access_token: `${FACEBOOK_ACCESS_TOKEN}`,
+    },
+  };
+  return request(config, (err, res, body) => {
+    if (!body.error) {
+      console.log("message sent!", body);
+      return body;
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
+  });
+};
 
 // ใช้ค่าจาก .env
 const PORT = process.env.PORT || 3001;
