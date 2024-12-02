@@ -56,29 +56,32 @@ const broadcastMessage = (message) => {
 
 //function gemini AI
 async function start_AI(message_in) {
+  let prompt =
+    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ \n";
+  prompt += message_in;
+  prompt += "หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม";
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  let result = await model.generateContent(message_in);
+  let result = await model.generateContent(prompt);
   return result.response.text();
 }
 
 app.post("/api/geminicall", async (req, res) => {
   const { message } = req.body;
-  let prompt =
-    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ \n";
-  prompt += message;
-  prompt += "หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม";
-  let ai_talk = await start_AI(prompt);
+  let ai_talk = await start_AI(message);
   res.send({ AI: ai_talk });
 });
 
 // Endpoint: รับข้อความจาก Facebook Webhook
-app.post("/api/facebookwebhook", (req, res) => {
+app.post("/api/facebookwebhook", async (req, res) => {
+  // const { message } = req.body;
   const message = req.body.entry[0]?.messaging[0];
   if (message) {
     const senderId = message.sender.id; // ตัวระบุบุคคล
     const text = message.message?.text || "ไม่มีข้อความ";
-    saveMessageToDB("facebook", senderId, text);
+    let ai_talk = await start_AI(message);
+    // saveMessageToDB("facebook", senderId, text);
+    res.send({ AI: ai_talk });
   }
   res.sendStatus(200);
 });
