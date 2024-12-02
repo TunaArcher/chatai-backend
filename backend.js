@@ -190,6 +190,8 @@ app.get("/api/test", (req, res) => {
 const handleEventsFacebook = async (events) => {
   const hunmen = get(events, ["messaging", 0, "message", "text"]);
   const sender = get(events, ["messaging", 0, "sender", "id"]);
+  console.log(hunmen);
+  
   let text = await start_AI(hunmen);
   text = text.toString();
 
