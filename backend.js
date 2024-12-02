@@ -187,11 +187,11 @@ app.get("/api/test", (req, res) => {
   return res.status(200).json({ ss: "ok" });
 });
 
-const handleEventsFacebook = async (events) => {
+const handleEventsFacebook =  (events) => {
   const text = get(events, ["messaging", 0, "message", "text"]);
   const sender = get(events, ["messaging", 0, "sender", "id"]);
-  const ai_talk = await start_AI(text);
-  ai_talk = ai_talk.toString();
+  // const ai_talk = await start_AI(text);
+  // ai_talk = ai_talk.toString();
 
   const requestBody = {
     messaging_type: "RESPONSE",
