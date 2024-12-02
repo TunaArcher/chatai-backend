@@ -10,7 +10,7 @@ const { WebSocketServer } = require("ws");
 require("dotenv").config(); // โหลด .env
 
 const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
-const PAGE_ACCESS_TOKEN  = process.env.FACEBOOK_ACCESS_TOKEN;
+const PAGE_ACCESS_TOKEN  = process.env.PAGE_ACCESS_TOKEN;
 const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 
