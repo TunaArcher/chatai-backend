@@ -201,6 +201,9 @@ const handleEventsFacebook = async (events) => {
     message: { ai_talk },
   };
 
+  console.log(requestBody);
+  
+
   const config = {
     method: "post",
     uri: "https://graph.facebook.com/v6.0/me/messages",
