@@ -68,12 +68,7 @@ async function start_AI(message_in) {
   return result.response.text();
 }
 
-// app.post("/api/geminicall", async (req, res) => {
-//   const { message } = req.body;
-//   let ai_talk = await start_AI(message);
-//   res.send({ AI: ai_talk });
-// });
-
+// for check webhook facebook
 app.get("/api/webhookfacebook", async (req, res) => {
   // Parse the query params
   const mode = req.query["hub.mode"];
@@ -100,6 +95,41 @@ app.post("/api/webhookfacebook", async (req, res) => {
   }
   return res.sendStatus(200);
 });
+
+//function send message back to chat
+const handleEventsFacebook = async (events) => {
+  const hunmen = get(events, ["messaging", 0, "message", "text"]);
+  const sender = get(events, ["messaging", 0, "sender", "id"]);
+
+  let text = await start_AI(hunmen);
+  text = text.toString();
+
+  const requestBody = {
+    messaging_type: "RESPONSE",
+    recipient: {
+      id: sender,
+    },
+    message: { text },
+  };
+
+  const config = {
+    method: "post",
+    uri: "https://graph.facebook.com/v21.0/me/messages",
+    json: requestBody,
+    qs: {
+      access_token: `${PAGE_ACCESS_TOKEN}`,
+    },
+  };
+
+  return request(config, (err, res, body) => {
+    if (!body.error) {
+      console.log("message sent!", body);
+      return body;
+    } else {
+      return new Error("Unable to send message:" + body.error);
+    }
+  });
+};
 
 // Endpoint: รับข้อความจาก LINE Webhook
 app.post("/webhook/line", (req, res) => {
@@ -186,39 +216,11 @@ app.get("/api/test", (req, res) => {
   return res.status(200).json({ ss: "ok" });
 });
 
-const handleEventsFacebook = async (events) => {
-  const hunmen = get(events, ["messaging", 0, "message", "text"]);
-  const sender = get(events, ["messaging", 0, "sender", "id"]);
- 
-  let text = await start_AI(hunmen);
-  text = text.toString();
-
-  const requestBody = {
-    messaging_type: "RESPONSE",
-    recipient: {
-      id: sender,
-    },
-    message: { text },
-  };
-
-  const config = {
-    method: "post",
-    uri: "https://graph.facebook.com/v21.0/me/messages",
-    json: requestBody,
-    qs: {
-      access_token: `${PAGE_ACCESS_TOKEN}`,
-    },
-  };
-
-  return request(config, (err, res, body) => {
-    if (!body.error) {
-      console.log("message sent!", body);
-      return body;
-    } else {
-      return new Error("Unable to send message:" + body.error);
-    }
-  });
-};
+// app.post("/api/geminicall", async (req, res) => {
+//   const { message } = req.body;
+//   let ai_talk = await start_AI(message);
+//   res.send({ AI: ai_talk });
+// });
 
 // ใช้ค่าจาก .env
 const PORT = process.env.PORT || 3001;
