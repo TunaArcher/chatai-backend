@@ -60,9 +60,9 @@ const broadcastMessage = (message) => {
 //function gemini AI
 async function start_AI(message_in) {
   let prompt =
-    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ\n";
+    "คุณคือผู้ขายรถเพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ\n";
   prompt += message_in;
-  prompt += "\nหลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม";
+  prompt += "\n หลังจากแนะนำลูกค้าเสร็จก็ทำการขอเบอร์ลูกค้าไว้ติดต่อกลับหากลูกค้าต้องการข้อมูลเพิ่มเติม";
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   let result = await model.generateContent(prompt);
