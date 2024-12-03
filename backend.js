@@ -60,9 +60,9 @@ const broadcastMessage = (message) => {
 //function gemini AI
 async function start_AI(message_in) {
   let prompt =
-    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ \n";
+    "คุณคือผู้ขายรถเต้น EVX เพศหญิง มีหน้าที่รับคำถามจากลูกค้าและให้คำแนะนำ\n";
   prompt += message_in;
-  prompt += "หลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม";
+  prompt += "\nหลังจากแนะนำทำการขอเบอร์ลูกค้าไว้ติดต่อกลับเพิ่มเติม";
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   let result = await model.generateContent(prompt);
@@ -204,7 +204,7 @@ const handleEventsFacebook = async (events) => {
 
   const config = {
     method: "post",
-    uri: "https://graph.facebook.com/v6.0/me/messages",
+    uri: "https://graph.facebook.com/v21.0/me/messages",
     json: requestBody,
     qs: {
       access_token: `${PAGE_ACCESS_TOKEN}`,
